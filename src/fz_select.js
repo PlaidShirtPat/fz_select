@@ -4,28 +4,33 @@
  * Valid attributes: ng-model,
  * 
  * fzSelectItems:       Expects an Array or Function
- *                      The source list for the select component. If it is a function,
- *                      the return is expected to be either an array or a $q promise.
+ *                      The source list for the select component. If it is a 
+ *                      function, the return is expected to be either an 
+ *                      array or a $q promise.
+ *                      If the source list is a $q, then the list will not sort
+ *                      locally.
  *
- * fzMinRefreshRate:    Expects integer
- *                      if this option is used, fzSelectItems should return a
- *                      function.
- *                      this is the minimum refresh rate for a async list source. 
- *                      the component will always try to use list source function 
- *                      when the search string has been updated, but it will not 
- *                      call the source function more than every x milliseconds. 
- *                      EG If you only want to poll the server every 5 seconds, 
- *                      set a fzRefreshRate of 5000.
+ * fzRefresh:           Expects a function
+ *                      Requires fzRefreshRate
+ *                      signature should look something like:
+ *                      function refresh(searchString)
+ *                      If set, the component will call the supplied function
+ *                      when it comes time to refresh the list.
+ *
+ * fzRefreshRate:       Expects integer
+ *                      Requires fzRefresh
+ *                      How often the component will call the refresh function
  *  
  * fzMatchAttribute:    Expects string
  *                      if the list contains objects, this is the attribute name
  *                      of the desired value EG: if your list looks like 
  *                      [ { a: 'val' }, .... ] setting fzMatchAttribute to 'a', 
- *                      the component will return the value of a of the selected item.
+ *                      the component will return the value of a of the selected
+ *                      item.
  *
  * fzReturnAttribute:   Expects string
- *                      Useful if you have a list like [ {name: '', email: ''} and 
- *                      want to search by name, but return the email
+ *                      Useful if you have a list like [ {name: '', email: ''} 
+ *                      and want to search by name, but return the email
  *
  * fzIncludeNullOption: Expects boolean
  *                      Set to true if you want a null item prepended to the 
@@ -41,13 +46,14 @@
  */
 
 angular.module( "fzSelect", [] )
-.directive( "fzSelect", ['$filter', '$timeout', '$parse',
-  function($filter, $timeout, $parse){
+.directive( "fzSelect", ['$filter', '$timeout', '$parse', '$interval',
+  function($filter, $timeout, $parse, $interval){
     return {
       restrict: 'EA',
       template: 
 '<div class="input-group" >'+
-  '<input class="form-control" ng-model="searchString" ng-keydown="inputKeyDown($event)"></input>'+
+  '<input class="form-control" ng-model="searchString" ' + 
+    'ng-keydown="inputKeyDown($event)"></input>'+
   '<span class="input-group-btn">'+
     '<button class="btn btn-primary" ng-click="showAll()" > ' + 
       '<span ng-if="!resultsVisible.value">&#9660</span> ' +
@@ -56,7 +62,8 @@ angular.module( "fzSelect", [] )
   '</span>'+
 '</div>'+
 '<div class="fz-select-results-wrapper"> '+
-  '<div class="fz-select-results-container" ng-show="resultsVisible.value" ng-blur="resultsVisible.value = false;" > '+
+  '<div class="fz-select-results-container" ng-show="resultsVisible.value" ' +
+    'ng-blur="resultsVisible.value = false;" > '+
     '<div  class="fz-select-results-row" '+
       'ng-class="{\'fz-selected-row\': $index == selectedRowIndex}" '+
       'ng-repeat="item in filteredItems" '+
@@ -68,6 +75,11 @@ angular.module( "fzSelect", [] )
 '</div>',
 
       link: function($scope, element, attrs){
+
+        function initilizeError(message){
+          element.html('Error initlizing component.');
+          throw message;
+        };
 
         angular.element(element).addClass('fz-select-component');
 
@@ -99,15 +111,31 @@ angular.module( "fzSelect", [] )
           returnObjects = attrs.fzReturnObjects == "true";
         }
 
-        //expect a promise for execution
-        var isAsync = false;
-        if( attrs.hasOwnProperty("fzIsAsync") ){
-          isAsync = attrs.fzIsAsync == "true";
+
+        //Either refreshRate and Refresh are set, or neither
+        //are set
+        if(!(
+            (attrs.hasOwnProperty("fzRefreshRate") && 
+             attrs.hasOwnProperty("fzRefresh")) ||
+            (!attrs.hasOwnProperty("fzRefreshRate") && 
+             !attrs.hasOwnProperty("fzRefresh")))
+        ){
+          initilizeError( "fzSelect have both fzRefreshRate and fzRefresh " +
+                "or have neither set." )
         }
 
-        var minRefreshRate = null;
-        if( attrs.hasOwnProperty("fzMinRefreshRate") ){
+        // item list is async
+        var isAsync =  attrs.hasOwnProperty("fzRefresh"); 
+
+        var refreshRate = null;
+        if( attrs.hasOwnProperty("fzRefreshRate") ){
           refreshRate = parseInt( attrs.fzRefreshRate );
+        }
+
+        var refreshFunction = null;
+        var refreshPromise = null;
+        if( attrs.hasOwnProperty("fzRefresh") ){
+          refreshFunction = $parse(attrs.fzRefresh);
         }
 
         var includeNullOption = false;
@@ -136,24 +164,19 @@ angular.module( "fzSelect", [] )
           }
         };
 
-        $scope.getItems = function(){
-          return itemsGetter($scope);
-        }
-
         $scope.showAll = function(){
           //if the results are visible, don't show
           if($scope.resultsVisible.value)
             $scope.showResults(false);
           else
             $scope.filterItems(true);
-          // $scope.filteredItems = orderItems( $scope.getItems() );
-          // focusResults();
         };
 
         $scope.updateSourceValue = function(){
           if($scope.selectedValue != null){
             if( itemReturnAttributeGetter != null  && !returnObjects){
-              valueSetter($scope, itemReturnAttributeGetter($scope.selectedValue));
+              valueSetter( $scope, 
+                  itemReturnAttributeGetter($scope.selectedValue));
             } else {
               valueSetter($scope, $scope.selectedValue);
             }
@@ -201,8 +224,6 @@ angular.module( "fzSelect", [] )
         }
 
         $scope.resultFocused = function($event, item){
-          // var container = getResultsContainer();
-          // $scope.selectedRowIndex = angular.element(container).children().index($event.taget);
           $scope.selectedRowIndex = $scope.filteredItems.indexOf(item);
         }
 
@@ -241,7 +262,32 @@ angular.module( "fzSelect", [] )
         };
 
         function orderItems(items){
-          return $filter('orderBy')(items, $scope.orderObject.attribute, $scope.orderObject.reverse);
+          return $filter('orderBy')(
+              items, 
+              $scope.orderObject.attribute, 
+              $scope.orderObject.reverse);
+        }
+
+        function getItems(){
+          return itemsGetter($scope);
+        }
+
+        // update items, should not be used for async 
+        var updateItems(){
+
+          var tempList = getItems();
+
+          //if we are filtering, put it 
+          if(!onlyOrder)
+            tempList = $filter('filter')(tempList, $scope.searchString);
+
+          //order the items if it's not async
+          tempList = orderItems(tempList);
+
+          if(includeNullOption)
+            tempList.unshift(null);
+
+          $scope.filteredItems = tempList;
         }
 
         var initialFilter = true;
@@ -253,46 +299,33 @@ angular.module( "fzSelect", [] )
         $scope.filterItems = function(onlyOrder){
           
           var searchObject = {};
-          if( itemAttributeName != null ){
+          if( itemAttributeName != null )
             searchObject[itemAttributeName] = $scope.searchString;
-          } else {
+          else
             searchObject = $scope.searchString;
-          }
 
-          var tempList = [];
-          if(!onlyOrder){
-            tempList = $filter('filter')($scope.getItems(), $scope.searchString);
-          } else {
-            tempList = $scope.getItems();
-          }
-
-          tempList = orderItems(tempList);
-          //add blank option if option is set
-          if(includeNullOption){
-            tempList.unshift(null);
-          }
-          $scope.filteredItems = tempList;
-
+          if( !isAsync )
+            updateItems(onlyOrder);
 
           //Do not show results if the search string is set to null and 
           //we're not only ordering
           if( $scope.searchString == null && !onlyOrder ){
             $scope.showResults(false);
           } else {
-            //Do show 
             if( onlyOrder){
               $scope.showResults(true);
-            //if it's the initial filter, do not show items. 
-            //This prevents the results from being shown when the component is initilized
+            //If it's the initial filter, do not show items. 
+            //This prevents the results from being shown when the component 
+            //is initilized
             } else if( $scope.searchString.length > 0 
                 && !$scope.resultsVisible.value && !initialFilter ) {
               $scope.showResults(true);
-            } else if( $scope.searchString.length == 0 && $scope.resultsVisible.value ){
+            } else if( $scope.searchString.length == 0 && 
+                       $scope.resultsVisible.value ){
               $scope.showResults(false);
             }
             initialFilter = false;
           }
-
         };
 
         $scope.$watch('searchString', function(){
@@ -306,12 +339,24 @@ angular.module( "fzSelect", [] )
         }, true);
 
         $scope.$watch('selectedRowIndex', function(){
-          if( $scope.selectedRowIndex < 0 
-            || $scope.selectedRowIndex > ( $scope.filteredItems.length - 1 ) )
-            $scope.selectedRowIndex = 0
+          if($scope.selectedRowIndex < 0 || 
+            $scope.selectedRowIndex > ($scope.filteredItems.length - 1))
+            $scope.selectedRowIndex = 0;
         }, true);
 
-       
+        $scope.$on('$destroy', function(){
+          $interval.cancel(refreshPromise);
+        });
+
+        // code to run once setup is finished
+        function initComponent(){
+          if(isAsync){
+            refreshPromise = $interval(function(){
+              refreshFunction($scope.searchString);
+            });
+          }
+        }
+        initComponent();
       }
     }
   }
