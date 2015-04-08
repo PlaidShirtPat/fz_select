@@ -7,35 +7,37 @@
  *                      The source list for the select component. If it is a function,
  *                      the return is expected to be either an array or a $q promise.
  *
- *
- * fzIsAsync:           Expects boolean
- *                      is  the list source an async function?
- *
  * fzMinRefreshRate:    Expects integer
+ *                      if this option is used, fzSelectItems should return a
+ *                      function.
  *                      this is the minimum refresh rate for a async list source. 
- *                      the component will always try to use list source function when the search
- *                      string has been updated, but it will not call the source function
- *                      more than every x milliseconds. EG If you only want to poll the server every
- *                      5 seconds, set a fzRefreshRate of 5000.
+ *                      the component will always try to use list source function 
+ *                      when the search string has been updated, but it will not 
+ *                      call the source function more than every x milliseconds. 
+ *                      EG If you only want to poll the server every 5 seconds, 
+ *                      set a fzRefreshRate of 5000.
  *  
  * fzMatchAttribute:    Expects string
- *                      if the list contains objects, this is the attribute name of the desired value
- *                      EG: if your list looks like [ { a: 'val' }, .... ] setting fzMatchAttribute to 
- *                      'a', the component will return the value of a of the selected item.
+ *                      if the list contains objects, this is the attribute name
+ *                      of the desired value EG: if your list looks like 
+ *                      [ { a: 'val' }, .... ] setting fzMatchAttribute to 'a', 
+ *                      the component will return the value of a of the selected item.
  *
  * fzReturnAttribute:   Expects string
- *                      Useful if you have a list like [ {name: '', email: ''} and want to search by name, 
- *                      but return the email
+ *                      Useful if you have a list like [ {name: '', email: ''} and 
+ *                      want to search by name, but return the email
  *
  * fzIncludeNullOption: Expects boolean
- *                      Set to true if you want a null item prepended to the result list to allow for a blank 
- *                      option
+ *                      Set to true if you want a null item prepended to the 
+ *                      result list to allow for a blank option
  *
  * fzReturnObjects:     Expects boolean
  *                      Component will return objects, even for arbitrary input.
- *                      This is useful in conjunction with fzReturnAttribute. If you are searching a list of
- *                      contacts by name, but also want to be able to return some arbitrary email, the component
- *                      will return an object like: { email: 'asd@asd.com' } instead of just a string value.
+ *                      This is useful in conjunction with fzReturnAttribute. 
+ *                      If you are searching a list of contacts by name, but 
+ *                      also want to be able to return some arbitrary email, 
+ *                      the component will return an object like: 
+ *                      { email: 'asd@asd.com' } instead of just a string value.
  */
 
 angular.module( "fzSelect", [] )
@@ -272,7 +274,8 @@ angular.module( "fzSelect", [] )
           $scope.filteredItems = tempList;
 
 
-          //Do not show results if the search string is set to null and we're not only ordering
+          //Do not show results if the search string is set to null and 
+          //we're not only ordering
           if( $scope.searchString == null && !onlyOrder ){
             $scope.showResults(false);
           } else {
@@ -281,7 +284,8 @@ angular.module( "fzSelect", [] )
               $scope.showResults(true);
             //if it's the initial filter, do not show items. 
             //This prevents the results from being shown when the component is initilized
-            } else if( $scope.searchString.length > 0 && !$scope.resultsVisible.value && !initialFilter ) {
+            } else if( $scope.searchString.length > 0 
+                && !$scope.resultsVisible.value && !initialFilter ) {
               $scope.showResults(true);
             } else if( $scope.searchString.length == 0 && $scope.resultsVisible.value ){
               $scope.showResults(false);
@@ -292,7 +296,6 @@ angular.module( "fzSelect", [] )
         };
 
         $scope.$watch('searchString', function(){
-
           $scope.filterItems();
           $scope.selectedRowIndex = 0;
           if( !valueWasSelected )
@@ -303,7 +306,8 @@ angular.module( "fzSelect", [] )
         }, true);
 
         $scope.$watch('selectedRowIndex', function(){
-          if( $scope.selectedRowIndex < 0 || $scope.selectedRowIndex > ( $scope.filteredItems.length - 1 ) )
+          if( $scope.selectedRowIndex < 0 
+            || $scope.selectedRowIndex > ( $scope.filteredItems.length - 1 ) )
             $scope.selectedRowIndex = 0
         }, true);
 
