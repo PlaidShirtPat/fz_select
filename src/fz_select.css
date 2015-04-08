@@ -1,18 +1,34 @@
 .fz-select-component{
 }
-.fz-select-component span.input-group-button .dropdown-toggle{
+
+.fz-select-component span.input-group-button button{
   width: 33px;
+}
+
+.fz-select-results-wrapper{
+  position:relative;
+  width:100%;
 }
 .fz-select-results-container{
   border: 1px solid #CCC;
   margin-right: 33px;
+  max-height: 300px;
+  overflow-y: scroll;
+  background-color:white;
+  position: absolute;
+  z-index: 9999;
 }
 .fz-select-results-row{
   cursor: pointer;
   text-align: left;
   padding-left: 6px;
   padding-right: 6px;
+  min-height: 1.3em;
+  
 }
 .fz-select-results-row:hover{
+  background-color: #CCC;
+}
+.fz-select-results-row.fz-selected-row{
   background-color: #CCC;
 }
