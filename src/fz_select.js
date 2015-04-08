@@ -50,6 +50,7 @@ angular.module( "fzSelect", [] )
   function($filter, $timeout, $parse, $interval){
     return {
       restrict: 'EA',
+      scope: true,
       template: 
 '<div class="input-group" >'+
   '<input class="form-control" ng-model="searchString" ' + 
@@ -111,7 +112,6 @@ angular.module( "fzSelect", [] )
           returnObjects = attrs.fzReturnObjects == "true";
         }
 
-
         //Either refreshRate and Refresh are set, or neither
         //are set
         if(!(
@@ -120,28 +120,26 @@ angular.module( "fzSelect", [] )
             (!attrs.hasOwnProperty("fzRefreshRate") && 
              !attrs.hasOwnProperty("fzRefresh")))
         ){
-          initilizeError( "fzSelect have both fzRefreshRate and fzRefresh " +
-                "or have neither set." )
+          initilizeError( 
+            "fzSelect have both fzRefreshRate and fzRefresh or " +
+            "have neither set." )
         }
 
         // item list is async
         var isAsync =  attrs.hasOwnProperty("fzRefresh"); 
 
         var refreshRate = null;
-        if( attrs.hasOwnProperty("fzRefreshRate") ){
+        if(attrs.hasOwnProperty("fzRefreshRate"))
           refreshRate = parseInt( attrs.fzRefreshRate );
-        }
 
         var refreshFunction = null;
         var refreshPromise = null;
-        if( attrs.hasOwnProperty("fzRefresh") ){
+        if(attrs.hasOwnProperty("fzRefresh"))
           refreshFunction = $parse(attrs.fzRefresh);
-        }
 
         var includeNullOption = false;
-        if( attrs.hasOwnProperty("fzIncludeNullOption") ){
+        if(attrs.hasOwnProperty("fzIncludeNullOption"))
           includeNullOption = attrs.fzIncludeNullOption == "true";
-        }
 
         $scope.selectedRowIndex = 0;
         $scope.searchString = valueGetter($scope);
@@ -273,7 +271,7 @@ angular.module( "fzSelect", [] )
         }
 
         // update items, should not be used for async 
-        var updateItems(){
+        function updateItems(onlyOrder){
 
           var tempList = getItems();
 
@@ -348,11 +346,16 @@ angular.module( "fzSelect", [] )
           $interval.cancel(refreshPromise);
         });
 
+        function callRefreshFunction(searchString){
+          refreshFunction($scope)(searchString);
+        };
+
         // code to run once setup is finished
         function initComponent(){
           if(isAsync){
             refreshPromise = $interval(function(){
-              refreshFunction($scope.searchString);
+              callRefreshFunction($scope.searchString);
+              $scope.filteredItems = getItems();
             });
           }
         }

@@ -16,6 +16,7 @@
         $scope.myItems = sourceList.slice();
         $scope.asyncItems = [];
         $scope.myValue = { value: "something" };
+        $scope.asyncSearch = {value: '' };
 
         $scope.refreshItems = function(filterString){
           $timeout(function(){
@@ -41,14 +42,14 @@
              ng-model="myValue.value" ></div>
 
         <h2> Async Version </h2>
-        <h3> {{myValue.value}} </h3>
+        <h3> {{asyncSearch.value}} </h3>
         <div fz-select fz-select-items="asyncItems" 
              fz-match-attribute="name" 
              fz-refresh="refreshItems"
              fz-refresh-rate="2000"
              fz-return-attribute="value" 
              fz-return-objects="false"
-             ng-model="myValue.value" ></div>
+             ng-model="asyncSearch.value" ></div>
 
       </div>
 
