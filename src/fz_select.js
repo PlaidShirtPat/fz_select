@@ -356,7 +356,7 @@ angular.module( "fzSelect", [] )
             refreshPromise = $interval(function(){
               callRefreshFunction($scope.searchString);
               $scope.filteredItems = getItems();
-            });
+            }, refreshRate);
           }
         }
         initComponent();
