@@ -326,7 +326,10 @@ angular.module( "fzSelect", [] )
           }
         };
 
+        var searchStringChanged = false;
+
         $scope.$watch('searchString', function(){
+          searchStringChanged = true;
           $scope.filterItems();
           $scope.selectedRowIndex = 0;
           if( !valueWasSelected )
@@ -354,9 +357,12 @@ angular.module( "fzSelect", [] )
         function initComponent(){
           if(isAsync){
             refreshPromise = $interval(function(){
-              callRefreshFunction($scope.searchString);
+              if(searchStringChanged)
+                callRefreshFunction($scope.searchString);
+              searchStringChanged = false;
               $scope.filteredItems = getItems();
             }, refreshRate);
+
           }
         }
         initComponent();
