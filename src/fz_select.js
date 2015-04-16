@@ -53,7 +53,7 @@ angular.module( "fzSelect", [] )
       scope: true,
       template: 
 '<div class="fz-search-box" >'+
-  '<input class="fz-search-input" ng-model="searchString" ' + 
+  '<input class="fz-select-input" ng-model="searchString" ' + 
     'ng-keydown="inputKeyDown($event)"></input>'+
   '<span>' +
     '<button class="fz-select-button" ng-click="showAll()" > ' + 
