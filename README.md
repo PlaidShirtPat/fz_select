@@ -8,5 +8,7 @@ http://plnkr.co/edit/aTtP7mqLzfnPSEXVgOER?p=preview
 
 
 TODO:
-Add tests
 Make the results set look cleaner
+Support ng-repeat style lists "item.value as item.name for item in items"
+Add tests
+Rewrite the whole thing with what I've learned from the first attempt
