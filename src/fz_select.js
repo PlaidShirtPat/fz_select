@@ -52,15 +52,15 @@ angular.module( "fzSelect", [] )
       restrict: 'EA',
       scope: true,
       template: 
-'<div class="input-group" >'+
-  '<input class="form-control" ng-model="searchString" ' + 
+'<div class="fz-search-box" >'+
+  '<input class="fz-search-input" ng-model="searchString" ' + 
     'ng-keydown="inputKeyDown($event)"></input>'+
-  '<span class="input-group-btn">'+
-    '<button class="btn btn-primary" ng-click="showAll()" > ' + 
+  '<span>' +
+    '<button class="fz-search-button" ng-click="showAll()" > ' + 
       '<span ng-if="!resultsVisible.value">&#9660</span> ' +
       '<span ng-if="resultsVisible.value">&#9650</span> ' +
     '</button>'+
-  '</span>'+
+  '</span>' +
 '</div>'+
 '<div class="fz-select-results-wrapper"> '+
   '<div class="fz-select-results-container" ng-show="resultsVisible.value" ' +

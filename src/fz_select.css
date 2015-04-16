@@ -1,9 +1,58 @@
+
 .fz-select-component{
 }
 
-.fz-select-component span.input-group-button button{
-  width: 33px;
+
+/* SEARCH BOX */
+
+/* main styles */
+
+.fz-select-component .fz-search-box{
+  display: table;
+  width: 100%;
 }
+.fz-select-component>.fz-search-box>input{
+  width: 100%;
+  margin-right:33px;
+  float: left;
+  display: inline-block;
+}
+.fz-select-component>.fz-search-box>span{
+  display: table-cell;
+  vertical-align: middle;
+  width:1%;
+}
+
+.fz-select-component>.fz-search-box>span>button{
+  width: 33px;
+  display: inline-block;
+}
+
+/* small styles */
+.fz-select-component.fz-select-sm>.fz-search-box>input{
+  height: 20px;
+  padding: 2px 6px;
+}
+.fz-select-component.fz-select-sm>.fz-search-box>span>button{
+  min-height: 20px;
+  font-size: 10px;
+}
+
+/* bootstrap styles */
+.fz-select-component.fz-select-bs>.fz-search-box>input{
+  padding: 1px 5px;
+  border-radius: 3px 0px 0px 3px;
+  border: 1px solid gray;
+}
+.fz-select-component.fz-select-bs>.fz-search-box>span>button{
+  border-radius: 0px 3px 3px 0px;
+  border: 1px solid gray;
+}
+
+
+
+
+/* RESULTS */
 
 .fz-select-results-wrapper{
   position:relative;
