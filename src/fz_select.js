@@ -305,10 +305,20 @@ angular.module( "fzSelect", [] )
           //order the items if it's not async
           tempList = orderItems(tempList);
 
-          if(includeNullOption)
-            tempList.unshift(null);
-
           $scope.filteredItems = tempList;
+          addNullOption();
+        }
+
+        function addNullOption(){
+          if(includeNullOption){
+            if( itemReturnAttributeGetter == null){
+              $scope.filteredItems.unshift(null);
+            } else {
+              var nullItem = {};
+              nullItem[itemReturnAttributeName] = null;
+              $scope.filteredItems.unshift(nullItem);
+            }
+          }
         }
 
         var initialFilter = true;
@@ -389,6 +399,7 @@ angular.module( "fzSelect", [] )
               callRefreshFunction($scope.searchString);
             searchStringChanged = false;
             $scope.filteredItems = getItems();
+            addNullOption();
           }, refreshRate);
           $timeout(function(){
             componentInitialized = true;
