@@ -153,14 +153,23 @@ angular.module( "fzSelect", [] )
           //if there is no return attribute specified, return the value
           if(itemReturnAttributeGetter == null){
             $scope.searchString = valueGetter($scope);
+          //find the object that matches the return value
           } else if(itemAttributeGetter != null){
-            $scope.searchString = itemAttributeGetter();
+            
+            var itemList = itemsGetter($scope);
+            var value = valueGetter($scope);
+            for(var i=0; i < itemList.length; i++){
+              if( itemList[i][itemReturnAttributeName] == value){
+                $scope.searchString = itemList[i][itemAttributeName];
+                $scope.selectedValue = itemList[i];
+                break;
+              }
+            }
           } else {
             $scope.searchString = valueGetter();
           }
         }
 
-        initSearchString();
 
         $scope.showResults = function(show){
           $timeout(function(){
@@ -370,6 +379,8 @@ angular.module( "fzSelect", [] )
         // code to run once setup is finished
         function initComponent(){
           if(isAsync){
+            $scope.searchString = valueGetter($scope);
+            callRefreshFunction($scope.searchString);
             refreshPromise = $interval(function(){
               if(searchStringChanged)
                 callRefreshFunction($scope.searchString);
@@ -377,6 +388,8 @@ angular.module( "fzSelect", [] )
               $scope.filteredItems = getItems();
             }, refreshRate);
 
+          } else {
+            initSearchString();
           }
         }
         initComponent();
