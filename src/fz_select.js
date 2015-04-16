@@ -142,11 +142,23 @@ angular.module( "fzSelect", [] )
           includeNullOption = attrs.fzIncludeNullOption == "true";
 
         $scope.selectedRowIndex = 0;
-        $scope.searchString = valueGetter($scope);
+
         $scope.filteredItems = [];
         $scope.resultsVisible = {value: false};
         $scope.selectedValue = null;
         var valueWasSelected = false;
+
+        //initilize the search string value
+        function initSearchString(){
+          //if there is no return attribute specified, return the value
+          if(itemReturnAttributeGetter == null){
+            $scope.searchString = valueGetter($scope);
+          } else if(itemAttributeGetter != null){
+            $scope.searchString = itemAttributeGetter();
+          } else {
+            $scope.searchString = valueGetter();
+          }
+        }
 
         $scope.showResults = function(show){
           $timeout(function(){
