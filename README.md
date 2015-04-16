@@ -8,5 +8,5 @@ http://plnkr.co/edit/aTtP7mqLzfnPSEXVgOER?p=preview
 
 
 TODO:
-Remove bootstrap dependancy
 Add tests
+Make the results set look cleaner

@@ -42,11 +42,13 @@
 .fz-select-component.fz-select-bs>.fz-search-box>input{
   padding: 1px 5px;
   border-radius: 3px 0px 0px 3px;
-  border: 1px solid gray;
+  border: 1px solid #e1e3e8;
 }
 .fz-select-component.fz-select-bs>.fz-search-box>span>button{
   border-radius: 0px 3px 3px 0px;
-  border: 1px solid gray;
+  border: 1px solid #4697ce;
+  background-color: 1px solid #4697ce;
+  color: white;
 }
 
 
