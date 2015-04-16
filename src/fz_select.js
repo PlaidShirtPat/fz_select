@@ -160,6 +160,8 @@ angular.module( "fzSelect", [] )
           }
         }
 
+        initSearchString();
+
         $scope.showResults = function(show){
           $timeout(function(){
             $scope.resultsVisible.value = show;
