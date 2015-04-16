@@ -352,6 +352,8 @@ angular.module( "fzSelect", [] )
         var searchStringChanged = false;
 
         $scope.$watch('searchString', function(){
+          if(!componentInitialized)
+            return;
           searchStringChanged = true;
           $scope.filterItems();
           $scope.selectedRowIndex = 0;
@@ -363,6 +365,8 @@ angular.module( "fzSelect", [] )
         }, true);
 
         $scope.$watch('selectedRowIndex', function(){
+          if(!componentInitialized)
+            return;
           if($scope.selectedRowIndex < 0 || 
             $scope.selectedRowIndex > ($scope.filteredItems.length - 1))
             $scope.selectedRowIndex = 0;
@@ -376,20 +380,34 @@ angular.module( "fzSelect", [] )
           refreshFunction($scope)(searchString);
         };
 
+        var componentInitialized = false;
+        function initAsync(){
+          $scope.searchString = valueGetter($scope);
+          callRefreshFunction($scope.searchString);
+          refreshPromise = $interval(function(){
+            if(searchStringChanged)
+              callRefreshFunction($scope.searchString);
+            searchStringChanged = false;
+            $scope.filteredItems = getItems();
+          }, refreshRate);
+          $timeout(function(){
+            componentInitialized = true;
+          });
+        }
+
+        function initSync(){
+          initSearchString();
+          $timeout(function(){
+            componentInitialized = true;
+          });
+        }
+
         // code to run once setup is finished
         function initComponent(){
           if(isAsync){
-            $scope.searchString = valueGetter($scope);
-            callRefreshFunction($scope.searchString);
-            refreshPromise = $interval(function(){
-              if(searchStringChanged)
-                callRefreshFunction($scope.searchString);
-              searchStringChanged = false;
-              $scope.filteredItems = getItems();
-            }, refreshRate);
-
+            initAsync();
           } else {
-            initSearchString();
+            initSync();
           }
         }
         initComponent();
