@@ -99,6 +99,7 @@ angular.module( "fzSelect", [] )
 
         var itemReturnAttributeName = "value";
         var itemReturnAttributeGetter = null;
+        var hasSpecialReturnAttribute =  attrs.hasOwnProperty('fzReturnAttribute');
         if( attrs.hasOwnProperty('fzReturnAttribute') ){
           itemReturnAttributeGetter = $parse(attrs.fzReturnAttribute);
           itemReturnAttributeName = attrs.fzReturnAttribute;
@@ -151,7 +152,7 @@ angular.module( "fzSelect", [] )
         //initilize the search string value
         function initSearchString(){
           //if there is no return attribute specified, return the value
-          if(itemReturnAttributeGetter == null){
+          if(!hasSpecialReturnAttribute){
             $scope.searchString = valueGetter($scope);
           //find the object that matches the return value
           } else if(itemAttributeGetter != null){
