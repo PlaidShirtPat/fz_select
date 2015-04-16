@@ -56,7 +56,7 @@ angular.module( "fzSelect", [] )
   '<input class="fz-search-input" ng-model="searchString" ' + 
     'ng-keydown="inputKeyDown($event)"></input>'+
   '<span>' +
-    '<button class="fz-search-button" ng-click="showAll()" > ' + 
+    '<button class="fz-select-button" ng-click="showAll()" > ' + 
       '<span ng-if="!resultsVisible.value">&#9660</span> ' +
       '<span ng-if="resultsVisible.value">&#9650</span> ' +
     '</button>'+
