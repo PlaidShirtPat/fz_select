@@ -152,13 +152,18 @@ angular.module( "fzSelect", [] )
         //initilize the search string value
         function initSearchString(){
           //if there is no return attribute specified, return the value
-          if(!hasSpecialReturnAttribute){
-            $scope.searchString = valueGetter($scope);
+          if(itemReturnAttributeGetter == null){
+              $scope.searchString = valueGetter($scope);
           //find the object that matches the return value
           } else if(itemAttributeGetter != null){
-            
             var itemList = itemsGetter($scope);
-            var value = valueGetter($scope);
+            var value = null;
+
+            if(returnObjects)
+              value = valueGetter($scope)[itemReturnAttributeName];
+            else
+              value = valueGetter($scope);
+
             for(var i=0; i < itemList.length; i++){
               if( itemList[i][itemReturnAttributeName] == value){
                 $scope.searchString = itemList[i][itemAttributeName];
