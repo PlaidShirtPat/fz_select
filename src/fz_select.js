@@ -159,8 +159,12 @@ angular.module( "fzSelect", [] )
             var itemList = itemsGetter($scope);
             var value = null;
 
+            // if the value is null, no init nessessary 
+            if(valueGetter($scope) == null)
+              return;
+
             if(returnObjects)
-              value = valueGetter($scope)[itemReturnAttributeName];
+              value = valueGetter($scope)[itemAttributeName];
             else
               value = valueGetter($scope);
 
