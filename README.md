@@ -10,5 +10,6 @@ http://plnkr.co/edit/aTtP7mqLzfnPSEXVgOER?p=preview
 TODO:
 Make the results set look cleaner
 Support ng-repeat style lists "item.value as item.name for item in items"
+Add more support for watching source list.
 Add tests
 Rewrite the whole thing with what I've learned from the first attempt
