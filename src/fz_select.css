@@ -48,6 +48,7 @@
   display: inline-block;
   cursor: pointer;
   text-align: center;
+  border: 1px solid gray;
 }
 
 /* small styles */
@@ -80,14 +81,15 @@
   color: white;
   line-height: 1.46153846;
 }
-.fz-select-component.fz-select-bs.input-sm>.fz-search-box>input{
-  height: 28px !important;
+.fz-select-component.fz-select-bs.fz-input-sm>.fz-search-box>input{
+  height: 30px !important;
   padding: 4px 10px !important;
   font-size: 12px !important;
   line-height: 1.5 !important;
   border-radius: 2px 0px 0px 2px;
 }
-.fz-select-component.fz-select-bs.input-sm>.fz-search-box>span>button{
+.fz-select-component.fz-select-bs.fz-input-sm>.fz-search-box>span>button{
+  height: 30px;
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
