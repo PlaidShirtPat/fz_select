@@ -178,6 +178,8 @@ angular.module( "fzSelect", [] )
           } else {
             $scope.searchString = valueGetter();
           }
+
+          $scope.resultsVisible.value = false;
         }
 
 
