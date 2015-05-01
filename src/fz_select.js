@@ -372,6 +372,11 @@ angular.module( "fzSelect", [] )
         var searchStringChanged = false;
 
         //watch the model for changes
+
+        $scope.$watch(attrs.fzSelectItems, function(){
+          initSearchString();
+        }, true);
+
         $scope.$watch(attrs.ngModel, function(){
           initSearchString();
         }, true);
