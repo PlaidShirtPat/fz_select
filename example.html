@@ -19,6 +19,9 @@
 
         $scope.mySelectedObject = sourceList[0];
 
+        $scope.resetValue = function(){
+          $scope.myValue.value = 1;
+        };
         $scope.refreshItems = function(filterString){
           $timeout(function(){
             var filteredItems = [];
@@ -34,6 +37,10 @@
 
     <center>
       <div style="width: 600px;" ng-controller="test">
+
+        <h2> Set Source Value to One</h2>
+        <button ng-click="resetValue();" >Set Source Value</button>
+
         <h2> Basic Version </h2>
         <h3> {{myValue.value}} </h3>
         <div fz-select fz-select-items="myItems" 
