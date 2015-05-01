@@ -12,6 +12,11 @@
           {name: 'one', value: 1}, 
           {name: 'two', value: 2}, 
           {name: 'three', value: 3}];
+        var otherSourceList = [
+          {name: 'apple', value: 1}, 
+          {name: 'banana', value: 2}, 
+          {name: 'pear', value: 3}];
+
         $scope.myItems = sourceList.slice();
         $scope.asyncItems = [];
         $scope.myValue = { value: 2, name: 'two' };
@@ -22,6 +27,19 @@
         $scope.resetValue = function(){
           $scope.myValue.value = 1;
         };
+
+        var origList = true;
+        $scope.swapList = function(){
+          if(origList){
+            $scope.myItems = otherSourceList.slice();
+            $scope.myValue = { value: 2, name: 'banana' };
+          } else {
+            $scope.myItems = sourceList.slice();
+            $scope.myValue = { value: 2, name: 'two' };
+          }
+          origList = !origList;
+        };
+
         $scope.refreshItems = function(filterString){
           $timeout(function(){
             var filteredItems = [];
@@ -38,8 +56,9 @@
     <center>
       <div style="width: 600px;" ng-controller="test">
 
-        <h2> Set Source Value to One</h2>
-        <button ng-click="resetValue();" >Set Source Value</button>
+        <h2></h2>
+        <button ng-click="resetValue();" >Set Source Value to One</button>
+        <button ng-click="swapList();" >Swap List</button>
 
         <h2> Basic Version </h2>
         <h3> {{myValue.value}} </h3>
@@ -84,7 +103,22 @@
              fz-return-objects="false"
              ng-model="myValue.value" 
              class="fz-select-bs"></div>
+
+        <h2> Small Bootstrap Version </h2>
+        <h3> {{myValue.value}} </h3>
+        <div fz-select fz-select-items="myItems" 
+             fz-match-attribute="name" 
+             fz-return-attribute="value" 
+             fz-return-objects="false"
+             ng-model="myValue.value" 
+             class="fz-select-bs input-sm"
+             style="float: left; width:500px; margin-bottom:50px;"></div>
+
+        <button class="bootstrap-btn btn-sm"
+        style="float: left;">B</button>
+
       </div>
+
     </center>
 
 
