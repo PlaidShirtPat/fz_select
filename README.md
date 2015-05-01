@@ -1,4 +1,12 @@
-# fz_select
+```
+  __                  _           _   
+ / _|___     ___  ___| | ___  ___| |_ 
+| ||_  /____/ __|/ _ \ |/ _ \/ __| __|
+|  _/ /_____\__ \  __/ |  __/ (__| |_ 
+|_|/___|    |___/\___|_|\___|\___|\__|
+                                      
+```
+
 A bootstrap select component with angularjs
 
 Most of the documentation is in fz_select.js Will update this more later
