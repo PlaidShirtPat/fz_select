@@ -9,7 +9,7 @@ http://plnkr.co/edit/aTtP7mqLzfnPSEXVgOER?p=preview
 
 Here's how to override the component's style
 This will alter the heights for the fz-select-bs style and it's small counterpart
-```
+```css
 /** overrides for fz-select **/
 // default
 .fz-select-component.fz-select-bs>.fz-search-box>input {
