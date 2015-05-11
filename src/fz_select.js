@@ -206,6 +206,7 @@ angular.module( "fzSelect", [] )
         };
 
         $scope.updateSourceValue = function(){
+          weChangedTheSource = true;
           if($scope.selectedValue != null){
             if( itemReturnAttributeGetter != null  && !returnObjects){
               valueSetter( $scope, 
@@ -379,8 +380,12 @@ angular.module( "fzSelect", [] )
           initSearchString();
         }, true);
 
+        var weChangedTheSource = false;
         $scope.$watch(attrs.ngModel, function(){
-          initSearchString();
+          if(weChangedTheSource)
+            weChangedTheSource = false;
+          else
+            initSearchString();
         }, true);
 
         $scope.$watch('searchString', function(){
