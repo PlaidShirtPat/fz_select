@@ -44,11 +44,11 @@
           $timeout(function(){
             var filteredItems = [];
             angular.forEach(sourceList, function(item){
-              if(item.name == filterString)
+              if(item.name.includes(filterString))
                 filteredItems.push(item);
             })
             $scope.asyncItems = filteredItems;
-          }, 500);
+          }, 50);
         };
       })
     </script>
@@ -81,7 +81,7 @@
         <div fz-select fz-select-items="asyncItems" 
              fz-match-attribute="name" 
              fz-refresh="refreshItems"
-             fz-refresh-rate="2000"
+             fz-refresh-rate="1000"
              fz-return-attribute="value" 
              fz-return-objects="false"
              ng-model="asyncSearch.value" ></div>

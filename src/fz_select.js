@@ -377,7 +377,10 @@ angular.module( "fzSelect", [] )
         //watch the model for changes
 
         $scope.$watch(attrs.fzSelectItems, function(){
-          initSearchString();
+          if(weChangedTheSource)
+            weChangedTheSource = false;
+          else
+            initSearchString();
         }, true);
 
         var weChangedTheSource = false;
@@ -414,6 +417,7 @@ angular.module( "fzSelect", [] )
         });
 
         function callRefreshFunction(searchString){
+          weChangedTheSource = true;
           refreshFunction($scope)(searchString);
         };
 
