@@ -378,10 +378,7 @@ angular.module( "fzSelect", [] )
         //watch the model for changes
 
         $scope.$watch(attrs.fzSelectItems, function(){
-          if(weChangedTheSource)
-            weChangedTheSource = false;
-          else
-            initSearchString();
+          initSearchString();
         }, true);
 
         var weChangedTheSource = false;
