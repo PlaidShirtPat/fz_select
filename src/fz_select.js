@@ -179,7 +179,8 @@ angular.module( "fzSelect", [] )
             $scope.searchString = valueGetter();
           }
 
-          $scope.showResults(false);
+          if(!weChangedTheSource)
+            $scope.showResults(false);
         }
 
 

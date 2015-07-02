@@ -9,9 +9,18 @@
       angular.module("test", ['fzSelect'])
       .controller("test", function($scope, $q, $timeout){
         var sourceList = [
+          {name: 'zero', value: 0}, 
           {name: 'one', value: 1}, 
           {name: 'two', value: 2}, 
-          {name: 'three', value: 3}];
+          {name: 'three', value: 3},
+          {name: 'four', value: 4},
+          {name: 'five', value: 5},
+          {name: 'six', value: 6},
+          {name: 'seven', value: 7},
+          {name: 'eight', value: 8},
+          {name: 'nine', value: 9},
+          {name: 'ten', value: 10},
+        ];
         var otherSourceList = [
           {name: 'apple', value: 1}, 
           {name: 'banana', value: 2}, 
@@ -41,12 +50,15 @@
         };
 
         $scope.refreshItems = function(filterString){
+          var filteredItems = [];
+          angular.forEach(sourceList, function(item){
+            if(item.name.includes(filterString))
+              filteredItems.push({
+                name: item.name,
+                value: item.value,
+              });
+          })
           $timeout(function(){
-            var filteredItems = [];
-            angular.forEach(sourceList, function(item){
-              if(item.name.includes(filterString))
-                filteredItems.push(item);
-            })
             $scope.asyncItems = filteredItems;
           }, 50);
         };
