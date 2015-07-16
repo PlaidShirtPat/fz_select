@@ -326,11 +326,15 @@ angular.module( "fzSelect", [] )
         function addNullOption(){
           if(includeNullOption){
             if( itemReturnAttributeGetter == null){
-              $scope.filteredItems.unshift(null);
+              if($scope.filteredItems[0] != null)
+                $scope.filteredItems.unshift(null);
             } else {
-              var nullItem = {};
-              nullItem[itemReturnAttributeName] = null;
-              $scope.filteredItems.unshift(nullItem);
+              if($scope.filteredItems[0] != null 
+                  && $scope.filteredItems[0][itemReturnAttributeName] != null){
+                var nullItem = {};
+                nullItem[itemReturnAttributeName] = null;
+                $scope.filteredItems.unshift(nullItem);
+              }
             }
           }
         }
