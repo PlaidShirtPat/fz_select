@@ -282,10 +282,19 @@ angular.module( "fzSelect", [] )
             case 38:
               focusResults($event);
               break;
-
+            case 13: 
+              selectDefaultItem();
+              break;
             default:
               return;
           }
+        };
+
+        var selectDefaultItem = function(){
+          var index = 0;
+          if(includeNullOption)
+            index = 1;
+          $scope.resultItemClicked($scope.filteredItems[index]);
         };
 
         $scope.resultItemClicked = function(item){
@@ -398,7 +407,12 @@ angular.module( "fzSelect", [] )
             return;
           searchStringChanged = true;
           $scope.filterItems();
-          $scope.selectedRowIndex = 0;
+
+          if(includeNullOption)
+            $scope.selectedRowIndex = 1;
+          else
+            $scope.selectedRowIndex = 0;
+
           if( !valueWasSelected )
             $scope.selectedValue = null;
           else

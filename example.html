@@ -80,6 +80,15 @@
              fz-return-objects="false"
              ng-model="myValue.value" ></div>
 
+        <h2> Basic Version With Null Option </h2>
+        <h3> {{myValue.value}} </h3>
+        <div fz-select fz-select-items="myItems" 
+             fz-match-attribute="name" 
+             fz-return-attribute="value" 
+             fz-return-objects="false"
+             fz-include-null-option="true"
+             ng-model="myValue.value" ></div>
+
         <h2> Search by name, return id </h2>
         <h3> {{myValue.value}} </h3>
         <div fz-select fz-select-items="myItems" 
