@@ -226,14 +226,27 @@ angular.module( "fzSelect", [] )
           }
         };
 
+
+        //for some reason certain browsers will return things as an array 
+        var safeCall = function(element, functionToCall){
+          if(element){
+            if(element[functionToCall])
+              return element[functionToCall]();
+            if(element[0] && element[0][functionToCall])
+              return element[0][functionToCall]();
+          }
+        }
+
         $scope.resultsKeydown = function($event, item){
           function moveResults(isUp){
             $event.preventDefault();
+            var row = angular.element(angular.element($event.target))
             if( isUp )
-              angular.element(angular.element($event.target).prev()).focus();
+              safeCall(safeCall(row, "prev"), "focus");
             else
-              angular.element(angular.element($event.target).next()).focus();
+              safeCall(safeCall(row, "next"), "focus");
           }
+
           switch($event.keyCode){
             case 40:
               moveResults(false);
@@ -268,10 +281,22 @@ angular.module( "fzSelect", [] )
             $event.preventDefault();
           $timeout(function(){
             var container = getResultsContainer()
-            if( container != null )
-              angular.element(angular.element(container).children()[0]).focus();
+            if( container != null ){
+              var rowToFocus = angular.element(
+                angular.element(container).children()[getDefaultIndex()]
+              )
+              safeCall(rowToFocus, "focus");
+            }
           });
         };
+
+        var getDefaultIndex = function(){
+          if(includeNullOption) 
+            return 1;
+          else
+            return 0;
+
+        }
 
         $scope.inputKeyDown = function($event){
 

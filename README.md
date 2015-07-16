@@ -1,5 +1,9 @@
 #fz-select
 
+Requirements:
+  Angular 1.0+
+  Jquery (only because jqlite does not have prev())
+
 A bootstrap select component with angularjs
 
 Most of the documentation is in fz_select.js Will update this more later
