@@ -102,6 +102,10 @@
 
 /* RESULTS */
 
+.fz-selected{
+  color: red;
+}
+
 .fz-select-results-wrapper{
   position:relative;
   width:100%;
