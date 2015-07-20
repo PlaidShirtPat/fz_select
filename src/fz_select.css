@@ -27,6 +27,10 @@
 
 /* SEARCH BOX */
 
+
+*{
+  box-sizing:border-box;
+}
 /* main styles */
 
 .fz-search-box{
@@ -49,8 +53,8 @@
 .fz-search-box .fz-results-toggle{
   cursor: pointer;
   position: absolute;
-  height: 19px;
-  width: 20px;
+  height: 21px;
+  width: 21px;
   right:0px;
   border: 1px solid rgb(238, 238, 238);
   display: inline-block;
@@ -93,6 +97,7 @@
 }
 
 .fz-select-bs .fz-search-box .fz-results-toggle{
+  height: auto;
   font-size: 13px;
   padding: 8px 16px;
   border-radius: 0px 3px 3px 0px;
@@ -101,11 +106,12 @@
   background-color: #4697ce;
   color: white;
   line-height: 1.46153846;
+  width: auto;
 }
 
 .fz-select-bs .fz-search-box .fz-search-input-container{
   position: absolute;
-  right:54px;
+  right:46px;
   left:0px;
 }
 
@@ -124,7 +130,7 @@
 }
 
 .fz-select-bs.fz-select-sm .fz-search-box .fz-results-toggle{
-  height: 20px !important;
+  height: 30px !important;
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
@@ -133,7 +139,7 @@
 
 .fz-select-bs.fz-select-sm .fz-search-box .fz-search-input-container{
   position: absolute;
-  right:42px;
+  right: 14px;
   left:0px;
 }
 
