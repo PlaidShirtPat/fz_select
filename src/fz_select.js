@@ -24,9 +24,26 @@
  *                        the component will return the value of a of the selected
  *                        item.
  *
+ * fzAllowPartialResult   Expects boolean
+ *                        Default: false
+ *                        If true, when a user hits enter without selecting 
+ *                        a result, the control sets ngModel to the search 
+ *                        string entered.
+ *                        The search string will be added to the top of the 
+ *                        results list in order to give users a way to click on
+ *                        the result.
+ *                        This option is for situations where you want to suggest
+ *                        options to a user, but will also accept a freely
+ *                        entered value.
+ *                        When used in conjunction with fzReturnObjects, the
+ *                        entered string will be set to fzReturnAttribute. If 
+ *                        fzReturnAttribute.
+ *
+ *
  * fzReturnAttribute:     Expects string
  *                        Useful if you have a list like [ {name: '', email: ''} 
  *                        and want to search by name, but return the email
+ *                        defaults to fzMatchAttribute
  *
  * fzInitialSearchString  Expects string
  *                        The initial search string for the component
@@ -51,25 +68,34 @@ angular.module( "fzSelect", [] )
         'ngModel': "=",
       },
       template: 
-'<div class="fz-search-box" >' +
-  '<input ' + 
-    'class="fz-search-input" ' +
-    'ng-keydown="onInputKeydown($event)" '+
-    'ng-change="onSearchStringChanged()" ' +
-    'ng-model="searchString" />' +
+'<div class="fz-search-box" ' +
+  'ng-blur="hideResults()" >' +
+  '<div class="fz-search-input-container">' +
+    '<input ' + 
+      'class="fz-search-input" ' +
+      'ng-keydown="onInputKeydown($event)" '+
+      'ng-blur="onInputBlur($event)" ' +
+      'ng-focus="onInputFocus($event)" ' +
+      'ng-change="onSearchStringChanged()" ' +
+      'ng-model="searchString" />' +
+  '</div> ' +
   '<div ' +
     'class="fz-results-toggle" ' +
-    'ng-click="showResults(true)" ' +
+    'ng-click="toggleResults()" ' +
     '/>' +
+  '<div class="fz-search-spacer"></div>' + 
   '<div ' +
     'class="fz-results-container" ' +
+    'ng-show="resultsVisible" ' +
+    'ng-blur="onResultsBlur($event)" ' +
     'tabindex=0 '+
     'ng-keydown="onResultsKeydown($event)" >' +
 
     '<div ' +
-      'ng-class="{\'fz-selected\': isHighlightedItem(filteredItem)}" ' +
+      'class="fz-results-row" ' +
       'ng-repeat="filteredItem in filteredItems" ' + 
-      'class="fz-results-row" >' +
+      'ng-class="{\'fz-selected\': isHighlightedItem(filteredItem)}" ' +
+      'ng-click="onResultClicked($event, filteredItem)" >' +
       '{{getResultDisplay(filteredItem)}}' +
     '</div> ' + 
   '</div>' +
@@ -79,17 +105,19 @@ angular.module( "fzSelect", [] )
 
         /**** FLAGS ****/
         var isAsync = false;
+        var allowPartialResult = false;
         var returnObjects = false; 
         scope.searchStringChanged = false;
+        scope.resultsVisible = false;
+        var skipNextBlur = false;
 
         /**** SETTINGS ****/
         var matchAttribute = null;
+        var returnAttribute = null;
         var DEFAULT_REFRESH_RATE = 1000;
         var refreshRate = null;
 
         var asyncRefreshPromise = null;
-
-
         scope.filteredItems = [];
         scope.selectedItem = null;
         scope.searchString = null;
@@ -102,7 +130,6 @@ angular.module( "fzSelect", [] )
         }
 
         scope.onSearchStringChanged = function(){
-          console.log("search string changed");
           scope.searchStringChanged = true;
           //these need to be called by the source list changed lister
           //if async
@@ -119,15 +146,19 @@ angular.module( "fzSelect", [] )
         var selectItem = function(){
           scope.selectedItem = highlightedItem;
           updateNgModel();
+          scope.hideResults();
         }
 
-        var focusSearchBox = function(){
-
+        var focusSearchBox = function($event){
+          preventDefault($event);
+          skipNextBlur = true;
+          results = $(element).find('.fz-search-input');
+          if(results && results.focus)
+            results.focus();
         };
 
         scope.onResultsKeydown = function($event){
-          if($event != undefined)
-            $event.preventDefault();
+          preventDefault($event);
           currentIndex = scope.filteredItems.indexOf(highlightedItem);
 
           switch($event.keyCode){
@@ -137,7 +168,7 @@ angular.module( "fzSelect", [] )
               break;
             case 38:
               if(currentIndex == 0)
-                focusSearchBox();
+                focusSearchBox($event);
               else
                 highlightedItem = scope.filteredItems[currentIndex - 1];
               break;
@@ -150,8 +181,9 @@ angular.module( "fzSelect", [] )
         };
 
         var focusResults = function(startAtTop, $event){
-          if($event != undefined)
-            $event.preventDefault();
+          preventDefault($event);
+
+          skipNextBlur = true;
 
           if(startAtTop){
             highlightedItem = scope.filteredItems[0];
@@ -166,10 +198,27 @@ angular.module( "fzSelect", [] )
 
         };
 
-        var selectDefaultItem = function(){
+
+        var highlightDefaultItem = function(){
           highlightedItem = scope.filteredItems[0];
+        };
+
+        var selectDefaultItem = function(){
+          highlightDefaultItem();
           selectItem();
         };
+
+
+        var preventDefault = function($event){
+          if($event && $event.preventDefault)
+            $event.preventDefault();
+        }
+
+        scope.onResultClicked = function($event, item){
+          preventDefault($event);
+          highlightedItem = item;
+          selectItem();
+        }
 
         scope.onInputKeydown = function($event){
           switch($event.keyCode){
@@ -214,6 +263,27 @@ angular.module( "fzSelect", [] )
               scope.filteredItems, 
               false);
           }
+          //add the search string as a result
+          if(allowPartialResult){
+            addPartialResult(scope.filteredItems);
+          }
+          highlightDefaultItem();
+        }
+
+
+        var createResultObject = function(){
+          newResult = {};
+          newResult[matchAttribute] = scope.searchString;
+          newResult[returnAttribute] = scope.searchString;
+          return newResult;
+        };
+
+        var addPartialResult = function(items){
+          if(returnObjects)
+            newResult = createResultObject();
+          else
+            newResult = scope.searchString;
+          items.unshift(newResult);
         }
 
         var filterItems = function(){
@@ -224,8 +294,44 @@ angular.module( "fzSelect", [] )
             scope.filteredItems = 
               $filter('filter')(scope.fzSelectItems, scope.searchString);
           }
+          scope.showResults();
           scope.searchStringChanged = false;
         };
+
+
+        scope.onInputFocus = function($event){
+          preventDefault($event);
+
+          scope.showResults();
+        };
+
+        scope.onResultsBlur = function($event){
+          preventDefault($event);
+          if(!skipNextBlur){
+            scope.hideResults();
+          } else {
+            skipNextBlur = false;
+          }
+        };
+
+        scope.onInputBlur = function($event){
+          preventDefault($event);
+          if(!skipNextBlur){
+            scope.hideResults();
+          } else {
+            skipNextBlur = false;
+          }
+        };
+
+        scope.hideResults = function($event){
+          preventDefault($event);
+          scope.resultsVisible = false;
+        }
+
+        scope.showResults = function($event){
+          preventDefault($event);
+          scope.resultsVisible = true;
+        }
 
 
         var initComponent = function(){
@@ -241,6 +347,12 @@ angular.module( "fzSelect", [] )
           if(attrs.hasOwnProperty("fzMatchAttribute"))
             matchAttribute = attrs.fzMatchAttribute;
 
+          if(attrs.hasOwnProperty("fzReturnAttribute"))
+            returnAttribute = attrs.fzReturnAttribute;
+          else
+            returnAttribute = matchAttribute;
+
+
           if(attrs.hasOwnProperty("fzInitialSearchString"))
             scope.searchString = attrs.fzInitialSearchString;
 
@@ -248,6 +360,9 @@ angular.module( "fzSelect", [] )
             refreshRate = attrs.fzRefreshRate;
           else if(isAsync && refreshRate == null)
             refreshRate = DEFAULT_REFRESH_RATE;
+
+          if(attrs.hasOwnProperty("fzAllowPartialResult"))
+            allowPartialResult = attrs.fzAllowPartialResult;
 
           if(isAsync)
             startAsyncRefresh();
@@ -257,7 +372,6 @@ angular.module( "fzSelect", [] )
 
         var startAsyncRefresh = function(){
           asyncRefreshPromise = $interval(function(){
-            console.log("async called, change: " + scope.searchStringChanged);
             if(scope.searchStringChanged)
               scope.fzRefresh(scope.searchString);
           }, refreshRate);
@@ -282,7 +396,6 @@ angular.module( "fzSelect", [] )
 
         initListeners = function(){
           scope.$watch('fzSelectItems', function(){
-            console.log("source list changed");
             filterItems();
             orderItems();
           });

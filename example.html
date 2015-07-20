@@ -81,22 +81,14 @@
              fz-return-objects="false"
              ng-model="myValue.value" ></div>
 
-        <h2> Basic Version With Null Option </h2>
+        <h2> Basic Version With Partial Results </h2>
         <h3> {{myValue.value}} </h3>
         <div fz-select fz-select-items="myItems" 
              fz-match-attribute="name" 
              fz-return-attribute="value" 
              fz-return-objects="false"
-             fz-include-null-option="true"
+             fz-allow-partial-result="true"
              ng-model="myValue.value" ></div>
-
-        <h2> Search by name, return id </h2>
-        <h3> {{myValue.value}} </h3>
-        <div fz-select fz-select-items="myItems" 
-             fz-match-attribute="name" 
-             fz-return-attribute="value" 
-             fz-return-objects="false"
-             ng-model="mySelectedObject.value" ></div>
 
         <h2> Async Version </h2>
         <h3> {{asyncSearch.value}} </h3>
@@ -106,6 +98,17 @@
              fz-refresh-rate="1000"
              fz-return-attribute="value" 
              fz-return-objects="false"
+             ng-model="asyncSearch.value" ></div>
+
+        <h2> Async Version with Partial Results </h2>
+        <h3> {{asyncSearch.value}} </h3>
+        <div fz-select fz-select-items="asyncItems" 
+             fz-match-attribute="name" 
+             fz-refresh="refreshItems"
+             fz-refresh-rate="1000"
+             fz-return-attribute="value" 
+             fz-return-objects="false"
+             fz-allow-partial-result="true"
              ng-model="asyncSearch.value" ></div>
 
         <h2> Small Version </h2>

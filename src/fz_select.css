@@ -29,6 +29,55 @@
 
 /* main styles */
 
+
+.fz-search-box{
+  position:relative;
+}
+
+
+.fz-search-box .fz-search-input-container{
+  position: absolute;
+  right:21px;
+  left:0px;
+}
+
+.fz-search-box .fz-search-input{
+  border: 1px solid rgb(238, 238, 238);
+  height: 21px;
+  width:100%;
+  /* margin-right:21px; */
+}
+
+.fz-search-box .fz-results-toggle{
+  cursor: pointer;
+  position: absolute;
+  height: 19px;
+  width: 20px;
+  right:0px;
+  border: 1px solid rgb(238, 238, 238);
+  display: inline-block;
+}
+
+
+.fz-search-box .fz-search-spacer{
+  margin-top:22px;
+  clear: both;
+}
+
+.fz-search-box .fz-results-container{
+  border: 1px solid rgb(238, 238, 238);
+  padding: 2px 0px;
+
+}
+.fz-search-box .fz-results-row{
+  cursor: pointer;
+  text-align: left;
+  padding: 1px 2px;
+}
+.fz-search-box .fz-results-row:hover{
+  background-color: rgb(238, 238, 238);
+}
+
 .fz-select-component .fz-search-box{
   display: table;
   width: 100%;
@@ -43,6 +92,7 @@
   vertical-align: middle;
   width:1%;
 }
+
 
 .fz-select-component>.fz-search-box>span>button{
   display: inline-block;
