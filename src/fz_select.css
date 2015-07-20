@@ -33,6 +33,11 @@
 }
 /* main styles */
 
+div[fz-select]{
+  width:100%;
+}
+
+
 .fz-search-box{
   position:relative;
   width: 100%;
