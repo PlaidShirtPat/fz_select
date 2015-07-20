@@ -421,6 +421,18 @@ angular.module( "fzSelect", [] )
           $interval.cancel(asyncRefreshPromise);
         };
 
+        var setInitialSearch = function(){
+          if(scope.ngModel != null){
+            for(i=0; i<scope.filteredItems.length; i++){
+              if(returnAttribute)
+                if(scope.ngModel == scope.filteredItems[i][returnAttribute]){
+                  scope.searchString = scope.filteredItems[i][matchAttribute];
+                  break;
+                }
+            };
+          }
+        };
+
         var setSearchString = function(){
           if(scope.ngModel == null)
             scope.searchString = 
@@ -430,6 +442,8 @@ angular.module( "fzSelect", [] )
         initListeners = function(){
           scope.$watch('fzSelectItems', function(){
             if(!listInitialized){
+              scope.filteredItems = scope.fzSelectItems;
+              setInitialSearch();
               listInitialized = true;
               return;
             }
