@@ -157,6 +157,12 @@ angular.module( "fzSelect", [] )
             else
               scope.ngModel = scope.selectedItem
           }
+          if(matchAttribute){
+            scope.searchString = scope.selectedItem[matchAttribute];
+          else
+            scope.searchString = scope.selectedItem;
+
+          }
         };
 
         var selectItem = function(){

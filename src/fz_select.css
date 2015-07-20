@@ -75,6 +75,7 @@ div[fz-select]{
   border: 1px solid rgb(238, 238, 238);
   padding: 2px 0px;
 
+  background-color: white;
 }
 .fz-search-box .fz-results-row{
   cursor: pointer;
