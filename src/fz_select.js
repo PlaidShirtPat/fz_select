@@ -55,7 +55,7 @@ angular.module( "fzSelect", [] )
   '<input ' + 
     'class="fz-search-input" ' +
     'ng-keydown="onInputKeydown($event)" '+
-    'ng-change="searchStringChanged()" ' +
+    'ng-change="onSearchStringChanged()" ' +
     'ng-model="searchString" />' +
   '<div ' +
     'class="fz-results-toggle" ' +
@@ -79,9 +79,8 @@ angular.module( "fzSelect", [] )
 
         /**** FLAGS ****/
         var isAsync = false;
-        var returnObjects = false; var isInitialized = false;
-        var selectedItemInitialized = false;
-        var listInitialized = false;
+        var returnObjects = false; 
+        scope.searchStringChanged = false;
 
         /**** SETTINGS ****/
         var matchAttribute = null;
@@ -102,9 +101,15 @@ angular.module( "fzSelect", [] )
           return highlightedItem === item;
         }
 
-        scope.searchStringChanged = function(){
-          filterItems();
-          orderItems();
+        scope.onSearchStringChanged = function(){
+          console.log("search string changed");
+          scope.searchStringChanged = true;
+          //these need to be called by the source list changed lister
+          //if async
+          if(!isAsync){
+            filterItems();
+            orderItems();
+          }
         };
 
         var updateNgModel = function(){
@@ -115,8 +120,6 @@ angular.module( "fzSelect", [] )
           scope.selectedItem = highlightedItem;
           updateNgModel();
         }
-
-
 
         var focusSearchBox = function(){
 
@@ -215,11 +218,13 @@ angular.module( "fzSelect", [] )
 
         var filterItems = function(){
           //if async, skip filtering
-          if(isAsync)
-            return; 
-
-          scope.filteredItems = 
-            $filter('filter')(scope.fzSelectItems, scope.searchString);
+          if(isAsync){
+              scope.filteredItems = scope.fzSelectItems;
+          } else {
+            scope.filteredItems = 
+              $filter('filter')(scope.fzSelectItems, scope.searchString);
+          }
+          scope.searchStringChanged = false;
         };
 
 
@@ -244,17 +249,17 @@ angular.module( "fzSelect", [] )
           else if(isAsync && refreshRate == null)
             refreshRate = DEFAULT_REFRESH_RATE;
 
-          if(!isAsync){
-          } else {
+          if(isAsync)
             startAsyncRefresh();
-          }
 
           initListeners();
         };
 
         var startAsyncRefresh = function(){
           asyncRefreshPromise = $interval(function(){
-            scope.fzRefresh();
+            console.log("async called, change: " + scope.searchStringChanged);
+            if(scope.searchStringChanged)
+              scope.fzRefresh(scope.searchString);
           }, refreshRate);
         };
 
@@ -277,6 +282,9 @@ angular.module( "fzSelect", [] )
 
         initListeners = function(){
           scope.$watch('fzSelectItems', function(){
+            console.log("source list changed");
+            filterItems();
+            orderItems();
           });
           scope.$on('$destroy', cleanUp);
         }
