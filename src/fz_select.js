@@ -302,7 +302,7 @@ angular.module( "fzSelect", [] )
         };
 
         var addPartialResult = function(items){
-          if(returnObjects)
+          if(matchAttribute)
             newResult = createResultObject();
           else
             newResult = scope.searchString;
