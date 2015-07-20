@@ -29,7 +29,6 @@
 
 /* main styles */
 
-
 .fz-search-box{
   position:relative;
 }
@@ -43,9 +42,8 @@
 
 .fz-search-box .fz-search-input{
   border: 1px solid rgb(238, 238, 238);
-  height: 21px;
+  height:21px;
   width:100%;
-  /* margin-right:21px; */
 }
 
 .fz-search-box .fz-results-toggle{
@@ -58,9 +56,8 @@
   display: inline-block;
 }
 
-
 .fz-search-box .fz-search-spacer{
-  margin-top:22px;
+  height: 21px;
   clear: both;
 }
 
@@ -74,45 +71,18 @@
   text-align: left;
   padding: 1px 2px;
 }
+
 .fz-search-box .fz-results-row:hover{
   background-color: rgb(238, 238, 238);
 }
 
-.fz-select-component .fz-search-box{
-  display: table;
-  width: 100%;
-}
-.fz-select-component>.fz-search-box>input{
-  width: 100%;
-  float: left;
-  display: inline-block;
-}
-.fz-select-component>.fz-search-box>span{
-  display: table-cell;
-  vertical-align: middle;
-  width:1%;
+.fz-search-box .fz-results-row.fz-selected{
+  background-color: rgb(238, 238, 238);
 }
 
-
-.fz-select-component>.fz-search-box>span>button{
-  display: inline-block;
-  cursor: pointer;
-  text-align: center;
-  border: 1px solid gray;
-}
-
-/* small styles */
-.fz-select-component.fz-select-sm>.fz-search-box>input{
-  height: 20px;
-  padding: 2px 6px;
-}
-.fz-select-component.fz-select-sm>.fz-search-box>span>button{
-  min-height: 20px;
-  font-size: 10px;
-}
 
 /* bootstrap styles */
-.fz-select-component.fz-select-bs>.fz-search-box>input{
+.fz-select-bs .fz-search-box .fz-search-input{
   font-size:13px;
   font-weight:400;
   padding: 7px 9px;
@@ -121,7 +91,8 @@
   height:36px;
   line-height: 1.46153846;
 }
-.fz-select-component.fz-select-bs>.fz-search-box>span>button{
+
+.fz-select-bs .fz-search-box .fz-results-toggle{
   font-size: 13px;
   padding: 8px 16px;
   border-radius: 0px 3px 3px 0px;
@@ -131,55 +102,43 @@
   color: white;
   line-height: 1.46153846;
 }
-.fz-select-component.fz-select-bs.fz-input-sm>.fz-search-box>input{
+
+.fz-select-bs .fz-search-box .fz-search-input-container{
+  position: absolute;
+  right:54px;
+  left:0px;
+}
+
+.fz-select-bs .fz-search-box .fz-search-spacer{
+  height: 36px;
+  clear: both;
+}
+
+/* small bootstrap styles */
+.fz-select-bs.fz-select-sm .fz-search-box .fz-search-input{
   height: 30px !important;
   padding: 4px 10px !important;
   font-size: 12px !important;
   line-height: 1.5 !important;
   border-radius: 2px 0px 0px 2px;
 }
-.fz-select-component.fz-select-bs.fz-input-sm>.fz-search-box>span>button{
-  height: 30px;
+
+.fz-select-bs.fz-select-sm .fz-search-box .fz-results-toggle{
+  height: 20px !important;
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5;
   border-radius: 0px 2px 2px 0px;
 }
 
-
-
-
-
-/* RESULTS */
-
-.fz-selected{
-  color: red;
-}
-
-.fz-select-results-wrapper{
-  position:relative;
-  width:100%;
-}
-.fz-select-results-container{
-  border: 1px solid #CCC;
-  margin-right: 33px;
-  max-height: 300px;
-  overflow-y: scroll;
-  background-color:white;
+.fz-select-bs.fz-select-sm .fz-search-box .fz-search-input-container{
   position: absolute;
-  z-index: 9999;
+  right:42px;
+  left:0px;
 }
-.fz-select-results-row{
-  cursor: pointer;
-  text-align: left;
-  padding-left: 6px;
-  padding-right: 6px;
-  min-height: 1.3em;
-  
+
+.fz-select-bs.fz-select-sm .fz-search-box .fz-search-spacer{
+  height: 30px;
+  clear: both;
 }
-.fz-select-results-row:hover{
-  background-color: #CCC;
-}
-.fz-select-results-row.fz-selected-row{
-  background-color: #CCC;
-}
+

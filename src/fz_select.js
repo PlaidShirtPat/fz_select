@@ -82,7 +82,10 @@ angular.module( "fzSelect", [] )
   '<div ' +
     'class="fz-results-toggle" ' +
     'ng-click="toggleResults()" ' +
-    '/>' +
+    '>' +
+    '<span ng-if="resultsVisible">&#9650;</span> ' +
+    '<span ng-if="!resultsVisible">&#9660;</span> ' +
+  '</div> ' +
   '<div class="fz-search-spacer"></div>' + 
   '<div ' +
     'class="fz-results-container" ' +
@@ -104,6 +107,7 @@ angular.module( "fzSelect", [] )
       link: function(scope, element, attrs){
 
         /**** FLAGS ****/
+        var listInitialized = false;
         var isAsync = false;
         var allowPartialResult = false;
         var returnObjects = false; 
@@ -117,11 +121,13 @@ angular.module( "fzSelect", [] )
         var DEFAULT_REFRESH_RATE = 1000;
         var refreshRate = null;
 
+        /**** CONTROLLER VARS ****/
         var asyncRefreshPromise = null;
         scope.filteredItems = [];
         scope.selectedItem = null;
-        scope.searchString = null;
-        highlightedItem = null;
+        scope.searchString = "";
+        var highlightedItem = null;
+        var inputBlurTimeoutPromise = null;
 
         var highlightedItem = null;
 
@@ -140,7 +146,17 @@ angular.module( "fzSelect", [] )
         };
 
         var updateNgModel = function(){
-          scope.ngModel = scope.selectedItem;
+          if(returnObjects)
+            scope.ngModel = scope.selectedItem;
+          else{
+            //if there is a return attribute and selected item exists
+            if(returnAttribute && scope.selectedItem)
+              scope.ngModel = scope.selectedItem[returnAttribute];
+            //if we don't have a selected item, or if we don't have a return 
+            //attribute, we can just return the item
+            else
+              scope.ngModel = scope.selectedItem
+          }
         };
 
         var selectItem = function(){
@@ -216,6 +232,9 @@ angular.module( "fzSelect", [] )
 
         scope.onResultClicked = function($event, item){
           preventDefault($event);
+          if(inputBlurTimeoutPromise){
+            $timeout.cancel(inputBlurTimeoutPromise);
+          }
           highlightedItem = item;
           selectItem();
         }
@@ -317,7 +336,9 @@ angular.module( "fzSelect", [] )
         scope.onInputBlur = function($event){
           preventDefault($event);
           if(!skipNextBlur){
-            scope.hideResults();
+            inputBlurTimeoutPromise = $timeout(function(){
+              scope.hideResults();
+            }, 500);
           } else {
             skipNextBlur = false;
           }
@@ -326,6 +347,13 @@ angular.module( "fzSelect", [] )
         scope.hideResults = function($event){
           preventDefault($event);
           scope.resultsVisible = false;
+        }
+
+        scope.toggleResults = function($event){
+          if(scope.resultsVisible)
+            scope.hideResults();
+          else
+            scope.showResults();
         }
 
         scope.showResults = function($event){
@@ -341,7 +369,7 @@ angular.module( "fzSelect", [] )
             isAsync = true;
 
           if(attrs.hasOwnProperty("fzReturnObjects"))
-            returnObjects = attrs.fzReturnObjects;
+            returnObjects = attrs.fzReturnObjects == "true";
 
           //set settings
           if(attrs.hasOwnProperty("fzMatchAttribute"))
@@ -352,7 +380,6 @@ angular.module( "fzSelect", [] )
           else
             returnAttribute = matchAttribute;
 
-
           if(attrs.hasOwnProperty("fzInitialSearchString"))
             scope.searchString = attrs.fzInitialSearchString;
 
@@ -362,7 +389,9 @@ angular.module( "fzSelect", [] )
             refreshRate = DEFAULT_REFRESH_RATE;
 
           if(attrs.hasOwnProperty("fzAllowPartialResult"))
-            allowPartialResult = attrs.fzAllowPartialResult;
+            allowPartialResult = attrs.fzAllowPartialResult == "true";
+
+          scope.filteredItems = scope.fzSelectItems;
 
           if(isAsync)
             startAsyncRefresh();
@@ -396,6 +425,11 @@ angular.module( "fzSelect", [] )
 
         initListeners = function(){
           scope.$watch('fzSelectItems', function(){
+            if(!listInitialized){
+              listInitialized = true;
+              return;
+            }
+
             filterItems();
             orderItems();
           });
