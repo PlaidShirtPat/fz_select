@@ -72,10 +72,15 @@ div[fz-select]{
 }
 
 .fz-search-box .fz-results-container{
+  position: absolute;
+  top: 21px;
+  width: 100%;
   border: 1px solid rgb(238, 238, 238);
   padding: 2px 0px;
-
+  max-height: 200px;
+  overflow-x: auto;
   background-color: white;
+  z-index: 999;
 }
 .fz-search-box .fz-results-row{
   cursor: pointer;
@@ -124,7 +129,11 @@ div[fz-select]{
 
 .fz-select-bs .fz-search-box .fz-search-spacer{
   height: 36px;
-  clear: both;
+}
+
+
+.fz-select-bs .fz-search-box .fz-results-container{
+  top: 36px;
 }
 
 /* small bootstrap styles */
@@ -146,12 +155,15 @@ div[fz-select]{
 
 .fz-select-bs.fz-select-sm .fz-search-box .fz-search-input-container{
   position: absolute;
-  right: 14px;
+  right: 32px;
   left:0px;
 }
 
 .fz-select-bs.fz-select-sm .fz-search-box .fz-search-spacer{
   height: 30px;
-  clear: both;
+}
+
+.fz-select-bs.fz-select-sm .fz-search-box .fz-results-container{
+  top: 30px;
 }
 
